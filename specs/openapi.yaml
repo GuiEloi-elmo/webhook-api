@@ -1,0 +1,116 @@
+openapi: 3.0.0
+info:
+  title: Webhook Management API
+  description: API for managing webhooks in the ELMO Partners system.
+  version: 1.0.0
+servers:
+  - url: https://api.elmo.com/v1
+paths:
+  /webhooks/{legalEntityId}:
+    post:
+      summary: Create a new webhook for a legal entity
+      operationId: createWebhook
+      parameters:
+        - name: legalEntityId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the legal entity to create a webhook for
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the webhook
+                callbackUrl:
+                  type: string
+                  description: Callback URL of the webhook
+                  format: uri
+                secret:
+                  type: string
+                  description: Secret key for the webhook
+              required:
+                - name
+                - callbackUrl
+                - secret
+      responses:
+        '201':
+          description: Webhook created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: ID of the created webhook
+                  name:
+                    type: string
+                    description: Name of the webhook
+                  callbackUrl:
+                    type: string
+                    description: Callback URL of the webhook
+                    format: uri
+                  secret:
+                    type: string
+                    description: Secret key for the webhook
+        '400':
+          description: Invalid input
+        '404':
+          description: Legal entity not found
+    get:
+      summary: List all webhooks for a legal entity
+      operationId: listWebhooks
+      parameters:
+        - name: legalEntityId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the legal entity to list webhooks for
+      responses:
+        '200':
+          description: List of webhooks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: ID of the webhook
+                    name:
+                      type: string
+                      description: Name of the webhook
+                    callbackUrl:
+                      type: string
+                      description: Callback URL of the webhook
+                      format: uri
+                    secret:
+                      type: string
+                      description: Secret key for the webhook
+        '404':
+          description: Legal entity not found
+  /webhooks/{webhookId}:
+    delete:
+      summary: Delete a webhook
+      operationId: deleteWebhook
+      parameters:
+        - name: webhookId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the webhook to delete
+      responses:
+        '204':
+          description: Webhook deleted successfully
+        '404':
+          description: Webhook not found
